@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOGO TO QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="layout">
+
+  <!-- ---------- preview ---------- -->
+  <section class="preview">
+    <header>
+      <h1>Logo → QR morph</h1>
+      <p class="sub">Click the logo to turn it into a QR code.</p>
+    </header>
+    <div id="stage" tabindex="0" role="button" aria-pressed="false" aria-label="Logo. Activate to transform into a QR code."></div>
+    <div class="stage-footer">
+      <p class="hint" id="hint">click to transform · drag to tilt</p>
+      <button id="toggle" class="btn btn-primary" type="button">Show QR</button>
+    </div>
+  </section>
+
+  <!-- ---------- settings ---------- -->
+  <aside class="panel" aria-label="Settings">
+
+    <section class="group">
+      <h2>Logo</h2>
+      <div class="logo-row">
+        <input id="emoji" type="text" value="💮" maxlength="16" aria-label="Emoji or text logo">
+        <button id="emojiBtn" class="btn icon-btn" type="button" aria-label="Choose an emoji" aria-haspopup="dialog" aria-expanded="false" aria-controls="emojiPop">😊</button>
+        <button id="uploadBtn" class="btn" type="button">Upload</button>
+        <input id="file" type="file" accept="image/*" hidden>
+      </div>
+      <div id="emojiPop" class="emoji-pop" role="dialog" aria-label="Emoji picker" hidden></div>
+    </section>
+
+    <section class="group">
+      <h2>QR code</h2>
+      <textarea id="qrtext" rows="3" aria-label="QR code content" placeholder="Link, contact card or message. Leave empty to use this page's URL."></textarea>
+      <p class="meta" aria-live="polite"><span id="qrError" class="error"></span><span id="counter"></span></p>
+      <label class="switch-row">
+        <span>White background <small>easier to scan</small></span>
+        <input id="cardToggle" class="switch" type="checkbox">
+      </label>
+    </section>
+
+    <section class="group">
+      <h2>Look</h2>
+      <div class="field">
+        <label for="style">Transition</label>
+        <select id="style"></select>
+      </div>
+      <div class="field">
+        <div class="field-head">
+          <label for="height" id="heightLabel">Block height</label>
+          <output id="heightValue" for="height">1.0×</output>
+        </div>
+        <input id="height" type="range" min="0.2" max="4" step="0.1" value="1">
+      </div>
+      <label class="switch-row">
+        <span>Brighter colours stand taller</span>
+        <input id="heightByBrightness" class="switch" type="checkbox">
+      </label>
+    </section>
+
+    <details class="group advanced">
+      <summary><h2>Advanced</h2></summary>
+
+      <fieldset class="field">
+        <legend>Error correction <small>lower fits more text, higher survives damage</small></legend>
+        <div class="seg">
+          <label><input type="radio" name="ec" value="L"><span>L</span></label>
+          <label><input type="radio" name="ec" value="M" checked><span>M</span></label>
+          <label><input type="radio" name="ec" value="Q"><span>Q</span></label>
+          <label><input type="radio" name="ec" value="H"><span>H</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Cubes per QR square <small id="densityNote"></small></legend>
+        <div class="seg">
+          <label><input type="radio" name="density" value="1" checked><span>1×1</span></label>
+          <label><input type="radio" name="density" value="2"><span>2×2</span></label>
+          <label><input type="radio" name="density" value="3"><span>3×3</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend>Outline</legend>
+        <div class="seg-row">
+          <div class="seg">
+            <label><input type="radio" name="outline" value="off" checked><span>Off</span></label>
+            <label><input type="radio" name="outline" value="auto"><span>Auto</span></label>
+            <label><input type="radio" name="outline" value="custom"><span>Custom</span></label>
+          </div>
+          <input id="outlineColor" type="color" value="#ff7aa8" aria-label="Outline colour" hidden>
+        </div>
+      </fieldset>
+
+      <label class="switch-row">
+        <span>Solid grid <small>fill light squares with cubes</small></span>
+        <input id="fillToggle" class="switch" type="checkbox">
+      </label>
+    </details>
+  </aside>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
+<script src="js/logo-qr-morph.js"></script>
+<script src="js/demo.js"></script>
+</body>
+</html>

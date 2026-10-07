@@ -1,0 +1,226 @@
+:root {
+  --bg: #1b1e26;
+  --bg-glow: #2a2f3b;
+  --panel: #22262f;
+  --field: #1a1d24;
+  --raised: #343a47;
+  --text: #eceef3;
+  --muted: #9aa0ae;
+  --line: #343946;
+  --accent: #ff7aa8;
+  --error: #ff8a7a;
+}
+
+* { box-sizing: border-box; }
+
+/* Square UI everywhere. `appearance: none` stops browsers (notably Safari)
+   drawing their own rounded native controls. */
+*, *::before, *::after { border-radius: 0 !important; }
+button, input, select, textarea { -webkit-appearance: none; appearance: none; }
+
+/* Native select arrow is gone with appearance: none, so draw our own. */
+select {
+  padding-right: 32px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0h10L5 6z' fill='%238b91a1'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 800px at 30% 30%, var(--bg-glow), var(--bg));
+  background-color: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 "Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  min-height: 100vh;
+}
+
+h1 { font-size: 20px; font-weight: 600; margin: 0; }
+h2 { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0; }
+small { color: var(--muted); font-size: 12px; font-weight: 400; }
+.sub { color: var(--muted); margin: 2px 0 0; }
+
+/* ---------- layout: preview left, settings right; stacked on narrow screens ---------- */
+/* Scales with the window: wider cap, gutters and panel grow on big screens. */
+.layout {
+  --gutter: clamp(16px, 2.5vw, 48px);
+  max-width: 2400px; margin: 0 auto; padding: var(--gutter);
+  display: grid; gap: var(--gutter);
+  grid-template-columns: minmax(0, 1fr) clamp(320px, 24vw, 440px);
+  align-items: start;
+}
+.preview { position: sticky; top: var(--gutter); min-width: 0; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns: minmax(0, 1fr); padding-bottom: 48px; }
+  .preview { position: static; }
+}
+@media (min-width: 1600px) {
+  body { font-size: 15px; }
+  h1 { font-size: 22px; }
+}
+
+/* ---------- stage ---------- */
+#stage {
+  position: relative;
+  width: 100%;
+  /* Fill the window height, leaving room for the title and the button below. */
+  height: max(360px, calc(100vh - 2 * var(--gutter) - 170px));
+  margin-top: 8px;
+  cursor: pointer;
+  touch-action: none;
+  outline: none;
+}
+#stage:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+#stage canvas { display: block; width: 100%; height: 100%; }
+@media (max-width: 860px) {
+  #stage { height: min(68vh, 560px); } /* stacked: leave the settings in reach */
+}
+
+.stage-footer { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 4px; }
+.hint { margin: 0; color: var(--muted); font-size: 13px; }
+
+/* ---------- buttons ---------- */
+.btn {
+  font: inherit; font-weight: 500; color: var(--text);
+  background: var(--field); border: 1px solid var(--line);
+  padding: 8px 14px; cursor: pointer;
+}
+.btn:hover { border-color: var(--muted); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #111; font-weight: 600; min-width: 160px; }
+.btn-primary:hover { border-color: var(--accent); filter: brightness(1.05); }
+.btn-primary.is-back { background: var(--field); border-color: var(--line); color: var(--text); font-weight: 500; }
+.icon-btn { width: 40px; padding: 0; font-size: 18px; line-height: 1; }
+.icon-btn[aria-expanded="true"] { border-color: var(--accent); }
+
+/* ---------- settings panel ---------- */
+.panel {
+  background: var(--panel); border: 1px solid var(--line);
+  padding: 4px 18px;
+}
+.group { display: grid; gap: 12px; padding: 16px 0; position: relative; }
+.group + .group { border-top: 1px solid var(--line); }
+
+.field { display: grid; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.field label, .field legend { font-size: 13px; color: var(--muted); padding: 0; }
+.field legend { margin-bottom: 6px; }
+.field legend small { display: block; }
+.field-head { display: flex; justify-content: space-between; align-items: baseline; }
+.field-head output { font-variant-numeric: tabular-nums; color: var(--text); }
+
+input[type=text], textarea, select {
+  width: 100%; font: inherit; color: var(--text);
+  background: var(--field); border: 1px solid var(--line);
+  padding: 8px 10px; height: 38px;
+}
+textarea { height: auto; min-height: 72px; resize: vertical; }
+input[type=text]:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+
+/* Custom range so the thumb is square like everything else. */
+input[type=range] {
+  appearance: none; width: 100%; height: 20px; margin: 2px 0;
+  background: transparent; cursor: pointer;
+}
+input[type=range]::-webkit-slider-runnable-track { height: 4px; background: var(--raised); }
+input[type=range]::-moz-range-track { height: 4px; background: var(--raised); }
+input[type=range]::-moz-range-progress { height: 4px; background: var(--accent); }
+input[type=range]::-webkit-slider-thumb {
+  appearance: none; width: 14px; height: 14px; margin-top: -5px;
+  background: var(--accent); border: 0;
+}
+input[type=range]::-moz-range-thumb { width: 14px; height: 14px; background: var(--accent); border: 0; border-radius: 0; }
+input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+input[type=color] {
+  appearance: none; width: 38px; height: 34px; padding: 3px; flex: none;
+  border: 1px solid var(--line); background: var(--field); cursor: pointer;
+}
+input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type=color]::-webkit-color-swatch { border: 0; border-radius: 0; }
+input[type=color]::-moz-color-swatch { border: 0; border-radius: 0; }
+
+.meta { display: flex; justify-content: space-between; gap: 8px; margin: -6px 0 0; font-size: 12px; color: var(--muted); }
+.meta #counter { margin-left: auto; font-variant-numeric: tabular-nums; }
+.error { color: var(--error) !important; }
+
+/* ---------- logo row ---------- */
+.logo-row { display: flex; gap: 8px; }
+.logo-row input { flex: 1; min-width: 0; font-size: 18px; }
+
+/* ---------- switches ---------- */
+.switch-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  cursor: pointer;
+}
+.switch-row small { display: block; }
+.switch {
+  appearance: none; flex: none; margin: 0; cursor: pointer;
+  width: 36px; height: 20px;
+  background: var(--raised); position: relative; transition: background 0.15s;
+}
+.switch::before {
+  content: ""; position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; background: #fff;
+  transition: transform 0.15s;
+}
+.switch:checked { background: var(--accent); }
+.switch:checked::before { transform: translateX(16px); }
+.switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- segmented controls ---------- */
+.seg-row { display: flex; gap: 8px; align-items: center; }
+.seg {
+  flex: 1; display: flex; gap: 2px; padding: 3px;
+  background: var(--field); border: 1px solid var(--line);
+}
+.seg label { flex: 1; position: relative; cursor: pointer; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg span {
+  display: block; text-align: center; padding: 5px 0;
+  color: var(--muted); font-size: 13px; transition: background 0.15s, color 0.15s;
+}
+.seg label:hover span { color: var(--text); }
+.seg input:checked + span { background: var(--raised); color: var(--text); }
+.seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* ---------- advanced (collapsible) ---------- */
+.advanced { display: block; }
+.advanced > :not(summary) { margin-top: 16px; }
+.advanced summary {
+  list-style: none; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.advanced summary::-webkit-details-marker { display: none; }
+.advanced summary::after { content: "+"; color: var(--muted); font-size: 18px; line-height: 1; }
+.advanced[open] summary::after { content: "–"; }
+.advanced summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* ---------- emoji picker ---------- */
+.emoji-pop {
+  position: absolute; top: calc(100% - 8px); left: 0; z-index: 10;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+.emoji-pop[hidden] { display: none; }
+.emoji-pop .fallback {
+  width: min(304px, calc(100vw - 32px)); padding: 12px 14px;
+  background: var(--panel); border: 1px solid var(--line);
+  font-size: 13px; color: var(--muted);
+}
+emoji-picker {
+  width: min(304px, calc(100vw - 32px));
+  height: 360px;
+  --background: var(--panel);
+  --border-color: var(--line);
+  --input-border-color: var(--line);
+  --input-font-color: var(--text);
+  --indicator-color: var(--accent);
+  --outline-color: var(--accent);
+  --button-hover-background: var(--raised);
+  --button-active-background: #3d4452;
+  --category-font-color: var(--muted);
+  --input-border-radius: 0;
+  --skintone-border-radius: 0;
+  font-family: "Noto Sans", system-ui, sans-serif;
+}
